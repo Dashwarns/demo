@@ -59,17 +59,12 @@
         tr:last-child td {
             border-bottom: none;
         }
-        #message {
-            margin-top: 20px;
-            color: #ff4d4d;
-        }
     </style>
 </head>
 <body>
     <h1>DashwarnStore</h1>
     <div class="container">
-        <div id="totalPenghasilan">Memuat total penghasilan...</div>
-        <div id="message"></div>
+        <div id="totalPenghasilan">Total Penghasilan: Rp 168.500</div>
         <table>
             <thead>
                 <tr>
@@ -77,65 +72,25 @@
                     <th>Sisa Uang</th>
                 </tr>
             </thead>
-            <tbody id="adminList">
-            </tbody>
+            <tbody>
+                <tr>
+                    <td>Gerren</td>
+                    <td>Rp 999.999.999.999.999</td>
+                </tr>
+                <tr>
+                    <td>Nathan</td>
+                    <td>Rp 78.500</td>
+                </tr>
+                <tr>
+                    <td>Kennard</td>
+                    <td>Rp 50.500</td>
+                </tr>
+                <tr>
+                    <td>Kenzo</td>
+                    <td>Rp 148.500</td>
+                </tr>
+                </tbody>
         </table>
     </div>
-
-    <script>
-        const API_ENDPOINT_URL = '/.netlify/functions/api-handler'; // Pastikan ini sesuai dengan nama file Netlify Function Anda
-
-        const totalPenghasilanDiv = document.getElementById('totalPenghasilan');
-        const adminListBody = document.getElementById('adminList');
-        const messageDisplay = document.getElementById('message');
-
-        async function loadData() {
-            messageDisplay.textContent = 'Memuat data...';
-            messageDisplay.style.color = '#cccccc';
-            adminListBody.innerHTML = '';
-
-            try {
-                const response = await fetch(API_ENDPOINT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        action: 'getData' // Aksi baru untuk mengambil data
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    messageDisplay.textContent = '';
-                    totalPenghasilanDiv.textContent = `Total Penghasilan: ${result.totalPenghasilan}`;
-                    if (result.adminData.length === 0) {
-                        const noDataRow = document.createElement('tr');
-                        noDataRow.innerHTML = `<td colspan="2" style="text-align: center; padding: 20px;">Belum ada data admin.</td>`;
-                        adminListBody.appendChild(noDataRow);
-                    } else {
-                        result.adminData.forEach(admin => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${admin.namaAdmin}</td>
-                                <td>${admin.sisaUang}</td>
-                            `;
-                            adminListBody.appendChild(row);
-                        });
-                    }
-                } else {
-                    messageDisplay.textContent = 'Gagal memuat data: ' + result.message;
-                    messageDisplay.style.color = '#ff4d4d';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                messageDisplay.textContent = 'Terjadi kesalahan saat memuat data. Coba lagi.';
-                messageDisplay.style.color = '#ff4d4d';
-            }
-        }
-
-        loadData();
-    </script>
 </body>
 </html>
