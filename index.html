@@ -97,10 +97,6 @@
                 <div class="summary-label">Total Penghasilan:</div>
                 <div class="summary-value" id="totalPenghasilan">Memuat...</div>
             </div>
-            <div class="summary-item">
-                <div class="summary-label">Total Pengeluaran:</div>
-                <div class="summary-value" id="totalPengeluaran">Memuat...</div>
-            </div>
         </div>
         
         <h2>Rincian Sisa Uang per Admin</h2>
@@ -138,13 +134,6 @@
 
         // Tampilkan total penghasilan keseluruhan
         totalPenghasilanDiv.textContent = formatCurrency(financialData.totalPenghasilan);
-
-        // Hitung total pengeluaran gabungan dari semua admin
-        let totalPengeluaranGabungan = 0;
-        financialData.admins.forEach(admin => {
-            totalPengeluaranGabungan += admin.pengeluaran;
-        });
-        totalPengeluaranDiv.textContent = formatCurrency(totalPengeluaranGabungan);
 
         // Tampilkan daftar admin dan hitung sisa uang mereka
         financialData.admins.forEach(admin => {
