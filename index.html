@@ -53,9 +53,6 @@
         #totalPenghasilan {
             color: #4CAF50;
         }
-        #totalPengeluaran {
-            color: #f44336;
-        }
         h2 {
             color: #9370DB;
             margin-top: 40px;
@@ -91,7 +88,7 @@
     </style>
 </head>
 <body>
-    <h1>DashwarnStore - Laporan Keuangan</h1>
+    <h1>DashwarnStore</h1>
     <div class="container">
         <div class="summary">
             <div class="summary-item">
@@ -104,7 +101,7 @@
             </div>
         </div>
         
-        <h2>Sisa Uang Admin DWStore</h2>
+        <h2>Sisa Uang Per Admin</h2>
         <table>
             <thead>
                 <tr>
@@ -121,7 +118,7 @@
     <script>
         // --- EDIT DATA DI SINI SETIAP KALI ADA PERUBAHAN ---
         const financialData = {
-            totalPenghasilanFull: 803500, // <--- UBAH NILAI INI
+            totalPenghasilanFull: 5000000, // <--- UBAH NILAI INI
             admins: [
                 { name: "Nathan", pengeluaran: 114000 },
                 { name: "Kennard", pengeluaran: 118000 },
@@ -132,7 +129,6 @@
         const adminListBody = document.getElementById('adminList');
         const totalPenghasilanFullDiv = document.getElementById('totalPenghasilanFull');
         const totalPenghasilanDiv = document.getElementById('totalPenghasilan');
-        const totalPengeluaranDiv = document.getElementById('totalPengeluaran');
 
         function formatCurrency(amount) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
@@ -146,13 +142,6 @@
 
         // Tampilkan total penghasilan yang sudah dihitung
         totalPenghasilanDiv.textContent = formatCurrency(totalPenghasilan);
-
-        // Hitung total pengeluaran gabungan dari semua admin
-        let totalPengeluaranGabungan = 0;
-        financialData.admins.forEach(admin => {
-            totalPengeluaranGabungan += admin.pengeluaran;
-        });
-        totalPengeluaranDiv.textContent = formatCurrency(totalPengeluaranGabungan);
 
         // Tampilkan daftar admin dan hitung sisa uang mereka
         financialData.admins.forEach(admin => {
