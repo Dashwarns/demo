@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DashwarnStore - Sisa Uang</title>
+    <title>DashwarnStore - Laporan Keuangan</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,6 +49,7 @@
             font-size: 2em;
             font-weight: bold;
         }
+        #totalPenghasilanFull,
         #totalPenghasilan {
             color: #4CAF50;
         }
@@ -90,16 +91,24 @@
     </style>
 </head>
 <body>
-    <h1>DashwarnStore - Sisa Uang</h1>
+    <h1>DashwarnStore - Laporan Keuangan</h1>
     <div class="container">
         <div class="summary">
+            <div class="summary-item">
+                <div class="summary-label">Total Penghasilan Full:</div>
+                <div class="summary-value" id="totalPenghasilanFull">Memuat...</div>
+            </div>
             <div class="summary-item">
                 <div class="summary-label">Total Penghasilan:</div>
                 <div class="summary-value" id="totalPenghasilan">Memuat...</div>
             </div>
+            <div class="summary-item">
+                <div class="summary-label">Total Pengeluaran:</div>
+                <div class="summary-value" id="totalPengeluaran">Memuat...</div>
+            </div>
         </div>
         
-        <h2>Sisa Uang</h2>
+        <h2>Rincian Sisa Uang per Admin</h2>
         <table>
             <thead>
                 <tr>
@@ -116,15 +125,16 @@
     <script>
         // --- EDIT DATA DI SINI SETIAP KALI ADA PERUBAHAN ---
         const financialData = {
-            totalPenghasilan: 187375, // Total penghasilan keseluruhan toko
+            totalPenghasilanFull: 803500, // <--- UBAH NILAI INI
             admins: [
-                { name: "Nathan", pengeluaran: 104000 },
-                { name: "Kennard", pengeluaran: 118000 },
-                { name: "Kenzo", pengeluaran: 20000 }
+                { name: "Dante", pengeluaran: 114000 },
+                { name: "Rian", pengeluaran: 118000 },
+                { name: "Admin Baru", pengeluaran: 20000 }
             ]
         };
 
         const adminListBody = document.getElementById('adminList');
+        const totalPenghasilanFullDiv = document.getElementById('totalPenghasilanFull');
         const totalPenghasilanDiv = document.getElementById('totalPenghasilan');
         const totalPengeluaranDiv = document.getElementById('totalPengeluaran');
 
@@ -132,12 +142,25 @@
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
         }
 
-        // Tampilkan total penghasilan keseluruhan
-        totalPenghasilanDiv.textContent = formatCurrency(financialData.totalPenghasilan);
+        // Tampilkan total penghasilan full
+        totalPenghasilanFullDiv.textContent = formatCurrency(financialData.totalPenghasilanFull);
+
+        // HITUNG Total Penghasilan dari Total Penghasilan Full
+        const totalPenghasilan = financialData.totalPenghasilanFull / 4;
+
+        // Tampilkan total penghasilan yang sudah dihitung
+        totalPenghasilanDiv.textContent = formatCurrency(totalPenghasilan);
+
+        // Hitung total pengeluaran gabungan dari semua admin
+        let totalPengeluaranGabungan = 0;
+        financialData.admins.forEach(admin => {
+            totalPengeluaranGabungan += admin.pengeluaran;
+        });
+        totalPengeluaranDiv.textContent = formatCurrency(totalPengeluaranGabungan);
 
         // Tampilkan daftar admin dan hitung sisa uang mereka
         financialData.admins.forEach(admin => {
-            const sisaUang = financialData.totalPenghasilan - admin.pengeluaran;
+            const sisaUang = totalPenghasilan - admin.pengeluaran;
             const sisaUangClass = sisaUang >= 0 ? 'positive' : 'negative';
 
             const row = document.createElement('tr');
