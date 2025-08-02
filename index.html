@@ -11,7 +11,6 @@
             color: #ffffff;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
@@ -88,10 +87,6 @@
         .negative {
             color: #f44336;
         }
-        #message {
-            margin-top: 20px;
-            color: #ff4d4d;
-        }
     </style>
 </head>
 <body>
@@ -108,7 +103,7 @@
             </div>
         </div>
         
-        <h2>Rincian Pengeluaran per Admin</h2>
+        <h2>Rincian Sisa Uang per Admin</h2>
         <table>
             <thead>
                 <tr>
@@ -117,78 +112,53 @@
                     <th>Sisa Uang (Bersih)</th>
                 </tr>
             </thead>
-            <tbody id="adminExpenseList">
+            <tbody id="adminList">
             </tbody>
         </table>
-
-        <div id="message"></div>
     </div>
 
     <script>
-        const API_ENDPOINT_URL = '/.netlify/functions/api-handler';
+        // --- EDIT DATA DI SINI SETIAP KALI ADA PERUBAHAN ---
+        const financialData = {
+            totalPenghasilan: 187375, // Total penghasilan keseluruhan toko
+            admins: [
+                { name: "Nathan", pengeluaran: 90000 },
+                { name: "Kennard", pengeluaran: 118000 },
+                { name: "Kenzo", pengeluaran: 20000 }
+            ]
+        };
 
+        const adminListBody = document.getElementById('adminList');
         const totalPenghasilanDiv = document.getElementById('totalPenghasilan');
         const totalPengeluaranDiv = document.getElementById('totalPengeluaran');
-        const adminExpenseListBody = document.getElementById('adminExpenseList');
-        const messageDisplay = document.getElementById('message');
-
-        async function loadFinancialData() {
-            messageDisplay.textContent = 'Memuat data...';
-            messageDisplay.style.color = '#cccccc';
-            adminExpenseListBody.innerHTML = '';
-
-            try {
-                const response = await fetch(API_ENDPOINT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        action: 'getFinancialData'
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    messageDisplay.textContent = '';
-                    
-                    totalPenghasilanDiv.textContent = formatCurrency(result.totalPenghasilan);
-                    totalPengeluaranDiv.textContent = formatCurrency(result.totalPengeluaran);
-
-                    if (result.adminData.length === 0) {
-                        const noDataRow = document.createElement('tr');
-                        noDataRow.innerHTML = `<td colspan="3" style="text-align: center; padding: 20px;">Belum ada data pengeluaran admin.</td>`;
-                        adminExpenseListBody.appendChild(noDataRow);
-                    } else {
-                        result.adminData.forEach(admin => {
-                            const row = document.createElement('tr');
-                            const sisaUangClass = admin.sisaUang >= 0 ? 'positive' : 'negative';
-                            row.innerHTML = `
-                                <td>${admin.namaAdmin}</td>
-                                <td>${formatCurrency(admin.pengeluaran)}</td>
-                                <td class="${sisaUangClass}">${formatCurrency(admin.sisaUang)}</td>
-                            `;
-                            adminExpenseListBody.appendChild(row);
-                        });
-                    }
-
-                } else {
-                    messageDisplay.textContent = 'Gagal memuat data: ' + result.message;
-                    messageDisplay.style.color = '#ff4d4d';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                messageDisplay.textContent = 'Terjadi kesalahan saat memuat data. Coba lagi.';
-                messageDisplay.style.color = '#ff4d4d';
-            }
-        }
 
         function formatCurrency(amount) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
         }
 
-        loadFinancialData();
+        // Tampilkan total penghasilan keseluruhan
+        totalPenghasilanDiv.textContent = formatCurrency(financialData.totalPenghasilan);
+
+        // Hitung total pengeluaran gabungan dari semua admin
+        let totalPengeluaranGabungan = 0;
+        financialData.admins.forEach(admin => {
+            totalPengeluaranGabungan += admin.pengeluaran;
+        });
+        totalPengeluaranDiv.textContent = formatCurrency(totalPengeluaranGabungan);
+
+        // Tampilkan daftar admin dan hitung sisa uang mereka
+        financialData.admins.forEach(admin => {
+            const sisaUang = financialData.totalPenghasilan - admin.pengeluaran;
+            const sisaUangClass = sisaUang >= 0 ? 'positive' : 'negative';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${admin.name}</td>
+                <td>${formatCurrency(admin.pengeluaran)}</td>
+                <td class="${sisaUangClass}">${formatCurrency(sisaUang)}</td>
+            `;
+            adminListBody.appendChild(row);
+        });
     </script>
 </body>
 </html>
